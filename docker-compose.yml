@@ -14,13 +14,18 @@ services:
       - mongo
   mongo:
     image: "mongo:4.4"
+    volumes:
+      - ./db:/data/db
     ports:
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: db
   mongo-express:
     image: "mongo-express:0.54"
+    depends_on:
+      - mongo
     ports:
       - "8081:8081"
     environment:
