@@ -2,5 +2,14 @@
   "name": "ecommerce",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "GPLv3"
+  "license": "GPLv3",
+  "scripts": {
+    "dev": "nodemon api/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
 }
