@@ -1,4 +1,5 @@
 const express = require('express');
+const helmet = require('helmet');
 const {ApolloServer} = require('apollo-server-express');
 require('dotenv').config();
 
@@ -15,6 +16,7 @@ const DB_HOST = process.env.DB_HOST;
 db.connect(DB_HOST);
 
 const app = express();
+app.use(helmet());
 
 const getUser = token => {
     if (token) {
