@@ -1,7 +1,6 @@
 const models = require('../models');
 
 module.exports = {
-    hello: () => 'Hello world!',
     products: async () => {
         return await models.Product.find();
     },

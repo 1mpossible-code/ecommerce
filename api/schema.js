@@ -41,7 +41,6 @@ module.exports = gql`
         updatedAt: DateTime!
     }
     type Query {
-        hello: String
         products: [Product!]!
         product(id: ID!): Product!
     }
