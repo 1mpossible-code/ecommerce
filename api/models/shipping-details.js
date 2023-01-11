@@ -8,6 +8,10 @@ const shippingDetailsSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    number: {
+        type: String,
+        required: true,
+    },
     address: {
         type: String,
         required: true,

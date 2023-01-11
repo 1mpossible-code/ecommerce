@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {AuthenticationError} = require('apollo-server-express');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 module.exports = {
@@ -57,5 +58,47 @@ module.exports = {
         }
 
         return jwt.sign({id: user._id}, process.env.JWT_SECRET);
+    },
+    addToCart: async (_, {productId}, {models, user}) => {
+        if (!user) {
+            throw new AuthenticationError('You are not authenticated.');
+        }
+
+        const product = await models.Product.findById(productId);
+        if (!product) {
+            throw new Error('Invalid product.');
+        }
+
+        const cartItem = await models.CartItem.findOne({user: user.id, product: productId});
+        if (cartItem) {
+            if (cartItem.quantity >= product.quantity) {
+                // throw new Error('Product out of stock.');
+                return false;
+            }
+            try {
+                await models.CartItem.findOneAndUpdate(
+                    {user: user.id, product: productId},
+                    {$inc: {quantity: 1}},
+                    {new: true});
+                return true;
+            } catch (e) {
+                throw new Error('Error adding to cart.');
+            }
+        }
+
+        try {
+            if (product.quantity === 0) {
+                // throw new Error('Product out of stock.');
+                return false;
+            }
+            await models.CartItem.create({
+                user: mongoose.Types.ObjectId(user.id),
+                product: mongoose.Types.ObjectId(productId),
+                quantity: 1,
+            });
+            return true;
+        } catch (e) {
+            throw new Error('Error adding to cart.');
+        }
     },
 };

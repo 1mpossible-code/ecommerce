@@ -11,6 +11,12 @@ module.exports = gql`
         createdAt: DateTime!
         updatedAt: DateTime!
     }
+    type CartItem {
+        id: ID!
+        user: User!
+        product: Product!
+        quantity: Int!
+    }
     type Order {
         id: ID!
         products: [Product!]!
@@ -37,6 +43,7 @@ module.exports = gql`
         lastName: String!
         password: String!
         shippingDetails: ShippingDetails
+        cart: [CartItem!]!
         orders: [Order!]!
         createdAt: DateTime!
         updatedAt: DateTime!
@@ -52,5 +59,7 @@ module.exports = gql`
         deleteProduct(id: ID!): Boolean!
         signup(email: String!, firstName: String!, lastName: String!, password: String!): String!
         signin(email: String!, password: String!): String!
+        addToCart(productId: ID!): Boolean!
+        removeFromCart(productId: ID!): Boolean!
     }
 `;
