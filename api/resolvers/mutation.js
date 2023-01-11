@@ -5,13 +5,13 @@ require('dotenv').config();
 
 module.exports = {
     createProduct: async (_, {name, description, price, quantity}, {models, user}) => {
-        if (!user.isAdmin) {
+        if (!(await models.User.findById(user.id))?.isAdmin) {
             throw new ForbiddenError('You are not authorized to perform this action.');
         }
         return await models.Product.create({name, description, price, quantity});
     },
-    updateProduct: async (_, {id, name, description, price, quantity}, {models}) => {
-        if (!user.isAdmin) {
+    updateProduct: async (_, {id, name, description, price, quantity}, {models, user}) => {
+        if (!(await models.User.findById(user.id))?.isAdmin) {
             throw new ForbiddenError('You are not authorized to perform this action.');
         }
         return await models.Product.findOneAndUpdate({_id: id},
@@ -26,7 +26,7 @@ module.exports = {
             {new: true});
     },
     deleteProduct: async (_, {id}, {models, user}) => {
-        if (!user.isAdmin) {
+        if (!(await models.User.findById(user.id))?.isAdmin) {
             throw new ForbiddenError('You are not authorized to perform this action.');
         }
         try {

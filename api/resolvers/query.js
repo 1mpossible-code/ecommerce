@@ -1,5 +1,5 @@
 const models = require('../models');
-const {AuthenticationError} = require('apollo-server-express');
+const {AuthenticationError, ForbiddenError} = require('apollo-server-express');
 
 module.exports = {
     products: async () => {
@@ -13,5 +13,11 @@ module.exports = {
             throw new AuthenticationError('You are not authenticated.');
         }
         return await models.User.findById(user.id);
-    }
+    },
+    users: async (_, __, {models, user}) => {
+        if (!(await models.User.findById(user.id))?.isAdmin) {
+            throw new ForbiddenError('You are not authorized to perform this action.');
+        }
+        return await models.User.find();
+    },
 };

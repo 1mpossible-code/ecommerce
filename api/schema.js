@@ -53,6 +53,7 @@ module.exports = gql`
         products: [Product!]!
         product(id: ID!): Product!
         me: User!
+        users: [User!]!
     }
     type Mutation {
         createProduct(name: String!, description: String!, price: Float!, quantity: Int!): Product!
