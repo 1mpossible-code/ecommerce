@@ -61,7 +61,6 @@ module.exports = gql`
         deleteProduct(id: ID!): Boolean!
         signup(email: String!, firstName: String!, lastName: String!, password: String!): String!
         signin(email: String!, password: String!): String!
-        addToCart(productId: ID!): Boolean!
-        removeFromCart(productId: ID!): Boolean!
+        setToCart(productId: ID!, quantity: Int!): Boolean!
     }
 `;
