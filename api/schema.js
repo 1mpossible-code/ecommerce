@@ -44,6 +44,7 @@ module.exports = gql`
     type Query {
         products: [Product!]!
         product(id: ID!): Product!
+        me: User!
     }
     type Mutation {
         createProduct(name: String!, description: String!, price: Float!, quantity: Int!): Product!
