@@ -24,6 +24,7 @@ module.exports = gql`
         id: ID!
         firstName: String!
         lastName: String!
+        number: String!
         address: String!
         city: String!
         state: String!
