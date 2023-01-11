@@ -6,13 +6,14 @@ const cartItemSchema = new mongoose.Schema({
     },
     quantity: {
         type: mongoose.Schema.Types.Number,
+        default: 1,
         required: true,
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
-    }
+    },
 });
 
 const CartItem = mongoose.model('CartItem', cartItemSchema);

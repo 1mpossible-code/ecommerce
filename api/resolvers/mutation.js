@@ -1,14 +1,19 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {AuthenticationError} = require('apollo-server-express');
-const mongoose = require('mongoose');
+const {AuthenticationError, ForbiddenError} = require('apollo-server-express');
 require('dotenv').config();
 
 module.exports = {
-    createProduct: async (_, {name, description, price, quantity}, {models}) => {
+    createProduct: async (_, {name, description, price, quantity}, {models, user}) => {
+        if (!user.isAdmin) {
+            throw new ForbiddenError('You are not authorized to perform this action.');
+        }
         return await models.Product.create({name, description, price, quantity});
     },
     updateProduct: async (_, {id, name, description, price, quantity}, {models}) => {
+        if (!user.isAdmin) {
+            throw new ForbiddenError('You are not authorized to perform this action.');
+        }
         return await models.Product.findOneAndUpdate({_id: id},
             {
                 $set: {
@@ -20,7 +25,10 @@ module.exports = {
             },
             {new: true});
     },
-    deleteProduct: async (_, {id}, {models}) => {
+    deleteProduct: async (_, {id}, {models, user}) => {
+        if (!user.isAdmin) {
+            throw new ForbiddenError('You are not authorized to perform this action.');
+        }
         try {
             await models.Product.findByIdAndDelete(id);
             return true;
@@ -68,34 +76,22 @@ module.exports = {
         if (!product) {
             throw new Error('Invalid product.');
         }
+        if (product.quantity === 0) {
+            throw new Error('Product out of stock.');
+        }
 
         const cartItem = await models.CartItem.findOne({user: user.id, product: productId});
         if (cartItem) {
             if (cartItem.quantity >= product.quantity) {
-                // throw new Error('Product out of stock.');
                 return false;
-            }
-            try {
-                await models.CartItem.findOneAndUpdate(
-                    {user: user.id, product: productId},
-                    {$inc: {quantity: 1}},
-                    {new: true});
-                return true;
-            } catch (e) {
-                throw new Error('Error adding to cart.');
             }
         }
 
         try {
-            if (product.quantity === 0) {
-                // throw new Error('Product out of stock.');
-                return false;
-            }
-            await models.CartItem.create({
-                user: mongoose.Types.ObjectId(user.id),
-                product: mongoose.Types.ObjectId(productId),
-                quantity: 1,
-            });
+            await models.CartItem.findOneAndUpdate(
+                {user: user.id, product: productId},
+                {$inc: {quantity: 1}},
+                {new: true, upsert: true});
             return true;
         } catch (e) {
             throw new Error('Error adding to cart.');

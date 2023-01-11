@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema({
         ref: 'ShippingDetails',
         required: false,
     },
+    isAdmin: {
+        type: Boolean,
+        default: false,
+        required: true,
+    },
 }, {timestamps: true});
 
 const User = mongoose.model('User', userSchema);

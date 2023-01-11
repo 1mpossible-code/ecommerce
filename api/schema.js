@@ -45,6 +45,7 @@ module.exports = gql`
         shippingDetails: ShippingDetails
         cart: [CartItem!]!
         orders: [Order!]!
+        isAdmin: Boolean!
         createdAt: DateTime!
         updatedAt: DateTime!
     }
