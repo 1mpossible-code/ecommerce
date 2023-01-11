@@ -97,4 +97,36 @@ module.exports = {
             throw new Error('Error adding to cart.');
         }
     },
+    removeFromCart: async (_, {productId}, {models, user}) => {
+        if (!user) {
+            throw new AuthenticationError('You are not authenticated.');
+        }
+
+        const product = await models.Product.findById(productId);
+        if (!product) {
+            throw new Error('Invalid product.');
+        }
+        const cartItem = await models.CartItem.findOne({user: user.id, product: productId});
+        console.log(cartItem, product, user);
+        if (!cartItem) {
+            throw new Error('Invalid cart item.');
+        }
+        if (cartItem.quantity === 1) {
+            try {
+                await models.CartItem.findOneAndDelete({user: user.id, product: productId});
+                return true;
+            } catch (e) {
+                throw new Error('Error removing from cart.');
+            }
+        }
+        try {
+            await models.CartItem.findOneAndUpdate(
+                {user: user.id, product: productId},
+                {$inc: {quantity: -1}},
+                {new: true});
+            return true;
+        } catch (e) {
+            throw new Error('Error removing from cart.');
+        }
+    },
 };
