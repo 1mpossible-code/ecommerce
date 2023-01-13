@@ -20,4 +20,10 @@ module.exports = {
         }
         return await models.User.find();
     },
+    user: async (_, {id}, {models, user}) => {
+        if (!(await models.User.findById(user.id))?.isAdmin) {
+            throw new ForbiddenError('You are not authorized to perform this action.');
+        }
+        return await models.User.findById(id);
+    },
 };

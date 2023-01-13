@@ -17,6 +17,7 @@
     "graphql-iso-date": "^3.6.1",
     "graphql-validation-complexity": "^0.4.2",
     "helmet": "^6.0.1",
+    "joi": "^17.7.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.8.3"
   },

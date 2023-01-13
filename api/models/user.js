@@ -16,11 +16,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    shippingDetails: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'ShippingDetails',
-        required: false,
-    },
     isAdmin: {
         type: Boolean,
         default: false,

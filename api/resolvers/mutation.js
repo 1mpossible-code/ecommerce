@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {AuthenticationError, ForbiddenError} = require('apollo-server-express');
 const {Error} = require('mongoose');
+const validators = require('./mutation.validators');
 require('dotenv').config();
 
 module.exports = {
@@ -105,6 +106,33 @@ module.exports = {
             return true;
         } catch (e) {
             throw new Error('Error adding to cart.');
+        }
+    },
+    setShippingDetails: async (_, {firstName, lastName, number, address, city, state, zip}, {models, user}) => {
+        if (!user) {
+            throw new AuthenticationError('You are not authenticated.');
+        }
+        const shippingDetailsValidated = validators.shippingDetailsValidator.validate({
+            user: user.id,
+            firstName,
+            lastName,
+            number,
+            address,
+            city,
+            state,
+            zip,
+        });
+        if (shippingDetailsValidated.error) {
+            throw new Error(shippingDetailsValidated.error.message);
+        }
+        try {
+            await models.ShippingDetails.findOneAndUpdate(
+                {user: user.id},
+                {$set: shippingDetailsValidated.value},
+                {new: true, upsert: true});
+            return true;
+        } catch (e) {
+            throw new Error('Error setting shipping details.');
         }
     },
 };

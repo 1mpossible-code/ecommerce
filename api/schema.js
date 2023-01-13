@@ -28,6 +28,7 @@ module.exports = gql`
     }
     type ShippingDetails {
         id: ID!
+        user: User!
         firstName: String!
         lastName: String!
         number: String!
@@ -42,7 +43,7 @@ module.exports = gql`
         firstName: String!
         lastName: String!
         password: String!
-        shippingDetails: ShippingDetails
+        shippingDetails: ShippingDetails!
         cart: [CartItem!]!
         orders: [Order!]!
         isAdmin: Boolean!
@@ -54,6 +55,7 @@ module.exports = gql`
         product(id: ID!): Product!
         me: User!
         users: [User!]!
+        user(id: ID!): User!
     }
     type Mutation {
         createProduct(name: String!, description: String!, price: Float!, quantity: Int!): Product!
@@ -62,5 +64,6 @@ module.exports = gql`
         signup(email: String!, firstName: String!, lastName: String!, password: String!): String!
         signin(email: String!, password: String!): String!
         setToCart(productId: ID!, quantity: Int!): Boolean!
+        setShippingDetails(firstName: String!, lastName: String!, number: String!, address: String!, city: String!, state: String!, zip: String!): Boolean!
     }
 `;
