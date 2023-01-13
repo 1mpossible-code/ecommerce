@@ -10,12 +10,24 @@ module.exports = {
         if (!(await models.User.findById(user.id))?.isAdmin) {
             throw new ForbiddenError('You are not authorized to perform this action.');
         }
+
+        const dataValidated = validators.productValidator.validate({name, description, price, quantity});
+        if (dataValidated.error) {
+            throw new Error(dataValidated.error.message);
+        }
+
         return await models.Product.create({name, description, price, quantity});
     },
     updateProduct: async (_, {id, name, description, price, quantity}, {models, user}) => {
         if (!(await models.User.findById(user.id))?.isAdmin) {
             throw new ForbiddenError('You are not authorized to perform this action.');
         }
+
+        const dataValidated = validators.productValidator.validate({name, description, price, quantity});
+        if (dataValidated.error) {
+            throw new Error(dataValidated.error.message);
+        }
+
         return await models.Product.findOneAndUpdate({_id: id},
             {
                 $set: {

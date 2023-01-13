@@ -1,6 +1,12 @@
 const Joi = require('joi');
 const {ObjectId} = require('mongodb');
 module.exports = {
+    productValidator: Joi.object({
+        name: Joi.string().required(),
+        description: Joi.string().required(),
+        price: Joi.number().min(0).required(),
+        quantity: Joi.number().min(0).required(),
+    }),
     signinValidator: Joi.object({
         email: Joi.string().email().required(),
         password: Joi.string().required(),
