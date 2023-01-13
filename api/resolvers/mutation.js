@@ -67,6 +67,11 @@ module.exports = {
     signin: async (_, {email, password}, {models}) => {
         email = email.trim().toLowerCase();
 
+        const validatedData = validators.signinValidator.validate({email, password});
+        if (validatedData.error) {
+            throw new Error(validatedData.error.message);
+        }
+
         const user = await models.User.findOne({email});
         if (!user) {
             throw new AuthenticationError('Error signing in.');
