@@ -69,5 +69,7 @@ module.exports = gql`
         setToCart(productId: ID!, quantity: Int!): Boolean!
         
         setShippingDetails(firstName: String!, lastName: String!, number: String!, address: String!, city: String!, state: String!, zip: String!): Boolean!
+        
+        createOrder: Order!
     }
 `;

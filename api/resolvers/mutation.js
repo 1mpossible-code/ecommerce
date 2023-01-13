@@ -162,4 +162,45 @@ module.exports = {
             throw new Error('Error setting shipping details.');
         }
     },
+    createOrder: async (_, __, {models, user}) => {
+        if (!user) {
+            throw new AuthenticationError('You are not authenticated.');
+        }
+        const cartItems = await models.CartItem.find({user: user.id});
+        if (cartItems.length === 0) {
+            throw new Error('Cart is empty.');
+        }
+        // Check if all products are in stock
+        for (const cartItem of cartItems) {
+            const product = await models.Product.findById(cartItem.product);
+            if (product.quantity < cartItem.quantity) {
+                throw new Error(`Product ${product.name} is out of stock. Only ${product.quantity} left.`);
+            }
+        }
+
+        const shippingDetails = await models.ShippingDetails.findOne({user: user.id});
+        if (!shippingDetails) {
+            throw new Error('Shipping details not set.');
+        }
+
+        try {
+            const order = await models.Order.create({
+                user: user.id,
+                shippingDetails: shippingDetails.id,
+                items: cartItems.map((cartItem) => {
+                    return cartItem._id;
+                }),
+                status: 'pending',
+            });
+            await models.CartItem.deleteMany({user: user.id});
+            // Update product quantities
+            for (const cartItem of cartItems) {
+                const product = await models.Product.findById(cartItem.product);
+                await models.Product.findByIdAndUpdate(product.id, {$set: {quantity: product.quantity - cartItem.quantity}});
+            }
+            return order;
+        } catch (e) {
+            throw new Error('Error creating order.');
+        }
+    },
 };
