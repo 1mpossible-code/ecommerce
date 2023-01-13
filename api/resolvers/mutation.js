@@ -40,6 +40,16 @@ module.exports = {
     },
     signup: async (_, {email, firstName, lastName, password}, {models}) => {
         email = email.trim().toLowerCase();
+        const userByEmail = await models.User.findOne({email});
+        if (userByEmail) {
+            throw new Error('User already exists.');
+        }
+
+        const signupDataValidated = validators.signupValidator.validate({email, firstName, lastName, password});
+        if (signupDataValidated.error) {
+            throw new Error(signupDataValidated.error.message);
+        }
+
         const hashed = await bcrypt.hash(password, 10);
         try {
             const user = await models.User.create({

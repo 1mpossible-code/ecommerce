@@ -1,6 +1,12 @@
 const Joi = require('joi');
 const {ObjectId} = require('mongodb');
 module.exports = {
+    signupValidator: Joi.object({
+        email: Joi.string().email().max(80).required(),
+        firstName: Joi.string().max(80).required(),
+        lastName: Joi.string().max(80).required(),
+        password: Joi.string().min(8).max(80).required(),
+    }),
     shippingDetailsValidator: Joi.object({
         user: Joi.string().custom((value, helpers) => {
             if (!ObjectId.isValid(value)) {
