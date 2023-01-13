@@ -44,7 +44,7 @@ module.exports = gql`
         firstName: String!
         lastName: String!
         password: String!
-        shippingDetails: ShippingDetails!
+        shippingDetails: ShippingDetails
         cart: [CartItem!]!
         orders: [Order!]!
         isAdmin: Boolean!

@@ -72,7 +72,6 @@ module.exports = {
             });
             return jwt.sign({id: user._id}, process.env.JWT_SECRET);
         } catch (e) {
-            console.log(e);
             throw new Error('Error creating account.');
         }
     },
@@ -152,12 +151,26 @@ module.exports = {
         if (shippingDetailsValidated.error) {
             throw new Error(shippingDetailsValidated.error.message);
         }
+
+        // Check if ShippingDetails is used for any order of this user
+        const shippingDetails = await models.ShippingDetails.findOne({user: user.id}, {}, {sort: {'createdAt': -1}});
+        const orders = await models.Order.find({user: user.id, shippingDetails: shippingDetails?._id});
         try {
-            await models.ShippingDetails.findOneAndUpdate(
-                {user: user.id},
-                {$set: shippingDetailsValidated.value},
-                {new: true, upsert: true});
-            return true;
+            if (orders.length > 0 || !shippingDetails) {
+                // If so, create a new ShippingDetails
+                await models.ShippingDetails.create({
+                    ...shippingDetailsValidated.value,
+                });
+                return true;
+            } else {
+                // If not, update the existing one
+                await models.ShippingDetails.findOneAndUpdate({user: user.id, _id: shippingDetails._id}, {
+                    $set: {
+                        ...shippingDetailsValidated.value,
+                    },
+                });
+                return true;
+            }
         } catch (e) {
             throw new Error('Error setting shipping details.');
         }
@@ -166,7 +179,7 @@ module.exports = {
         if (!user) {
             throw new AuthenticationError('You are not authenticated.');
         }
-        const cartItems = await models.CartItem.find({user: user.id});
+        const cartItems = await models.CartItem.find({user: user.id, ordered: false});
         if (cartItems.length === 0) {
             throw new Error('Cart is empty.');
         }

@@ -22,7 +22,7 @@ module.exports = {
             throw new ForbiddenError('You are not authorized to perform this action.');
         }
 
-        return await models.ShippingDetails.findOne({user: mongoose.Types.ObjectId(parent.id)});
+        return await models.ShippingDetails.findOne({user: mongoose.Types.ObjectId(parent.id)}, {}, {sort: {createdAt: -1}});
     },
     orders: async (parent, _, {models, user}) => {
         if (!user) {
