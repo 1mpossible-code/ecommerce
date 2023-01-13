@@ -109,7 +109,7 @@ module.exports = {
             throw new Error('Invalid product.');
         }
 
-        const cartItem = await models.CartItem.findOne({user: user.id, product: productId});
+        const cartItem = await models.CartItem.findOne({user: user.id, product: productId, ordered: false});
         if (cartItem && quantity === 0) {
             await models.CartItem.findByIdAndDelete(cartItem.id);
             return true;
@@ -127,7 +127,7 @@ module.exports = {
 
         try {
             await models.CartItem.findOneAndUpdate(
-                {user: user.id, product: productId},
+                {user: user.id, product: productId, ordered: false},
                 {$set: {quantity}},
                 {new: true, upsert: true});
             return true;
