@@ -192,7 +192,8 @@ module.exports = {
                 }),
                 status: 'pending',
             });
-            await models.CartItem.deleteMany({user: user.id});
+            // Update cartItems to be ordered
+            await models.CartItem.updateMany({user: user.id}, {$set: {ordered: true}});
             // Update product quantities
             for (const cartItem of cartItems) {
                 const product = await models.Product.findById(cartItem.product);

@@ -14,6 +14,13 @@ const cartItemSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
+    ordered: {
+        type: mongoose.Schema.Types.Boolean,
+        default: false,
+        required: true,
+    },
+}, {
+    timestamps: true,
 });
 
 const CartItem = mongoose.model('CartItem', cartItemSchema);
