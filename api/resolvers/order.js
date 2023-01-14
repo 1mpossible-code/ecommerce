@@ -21,7 +21,7 @@ module.exports = {
 
         return await models.ShippingDetails.findById(order.shippingDetails._id);
     },
-    products: async (order, _, {models, user}) => {
+    items: async (order, _, {models, user}) => {
         if (!user) {
             throw new AuthenticationError('You are not authenticated.');
         }
@@ -30,6 +30,6 @@ module.exports = {
             throw new ForbiddenError('You are not authorized to perform this action.');
         }
 
-        return await models.Product.find({_id: {$in: order.products}});
+        return await models.CartItem.find({_id: {$in: order.items}});
     },
 };

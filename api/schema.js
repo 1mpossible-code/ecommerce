@@ -20,7 +20,7 @@ module.exports = gql`
     }
     type Order {
         id: ID!
-        products: [Product!]!
+        items: [CartItem!]!
         user: User!
         shippingDetails: ShippingDetails!
         status: Status!
@@ -54,9 +54,14 @@ module.exports = gql`
     type Query {
         products: [Product!]!
         product(id: ID!): Product!
+        
         me: User!
+        
         users: [User!]!
         user(id: ID!): User!
+        
+        orders(userID: ID): [Order!]!
+        order(id: ID!): Order!
     }
     type Mutation {
         createProduct(name: String!, description: String!, price: Float!, quantity: Int!): Product!
@@ -71,5 +76,6 @@ module.exports = gql`
         setShippingDetails(firstName: String!, lastName: String!, number: String!, address: String!, city: String!, state: String!, zip: String!): Boolean!
         
         createOrder: Order!
+        updateOrderStatus(id: ID!, status: Status!): Boolean!
     }
 `;

@@ -5,6 +5,8 @@ module.exports = new GraphQLScalarType({
     serialize(value) {
         if (value === 'pending') {
             return 'pending';
+        } else if (value === 'processing') {
+            return 'processing';
         } else if (value === 'shipped') {
             return 'shipped';
         } else if (value === 'delivered') {

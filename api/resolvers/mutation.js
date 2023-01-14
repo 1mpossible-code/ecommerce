@@ -217,4 +217,19 @@ module.exports = {
             throw new Error('Error creating order.');
         }
     },
+    updateOrderStatus: async (_, {id, status}, {models, user}) => {
+        if (!(await models.User.findById(user.id)).isAdmin) {
+            throw new ForbiddenError('You are not authorized to perform this action.');
+        }
+        const statusValidated = validators.statusValidator.validate(status);
+        if (statusValidated.error) {
+            throw new Error(statusValidated.error.message);
+        }
+        try {
+            await models.Order.findByIdAndUpdate(id, {$set: {status: statusValidated.value}}, {new: true});
+            return true;
+        } catch (e) {
+            throw new Error('Error updating order status.');
+        }
+    },
 };

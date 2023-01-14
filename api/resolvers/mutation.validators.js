@@ -38,4 +38,5 @@ module.exports = {
         state: Joi.string().length(2).required(),
         zip: Joi.string().length(5).required(),
     }),
+    statusValidator: Joi.string().valid('pending', 'processing', 'shipped', 'delivered', 'cancelled').required(),
 };

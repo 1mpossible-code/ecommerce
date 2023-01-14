@@ -4,6 +4,7 @@ const User = require('./user');
 const CartItem = require('./cart-item');
 const Order = require('./order');
 const {GraphQLDateTime} = require('graphql-iso-date');
+const Status = require('../types/status');
 
 module.exports = {
     Query,
@@ -12,4 +13,5 @@ module.exports = {
     CartItem,
     Order,
     DateTime: GraphQLDateTime,
+    Status,
 };
