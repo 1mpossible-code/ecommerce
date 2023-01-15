@@ -233,4 +233,21 @@ module.exports = {
             throw new Error('Error updating order status.');
         }
     },
+    updateRole: async (_, {userId, role}, {models, user}) => {
+        if (!await isAdmin(models, user)) {
+            throw new ForbiddenError('You are not authorized to perform this action.');
+        }
+
+        const roleValidated = validators.roleValidator.validate(role);
+        if (roleValidated.error) {
+            throw new Error(roleValidated.error.message);
+        }
+
+        try {
+            await models.User.findById(userId, {$set: {role: roleValidated.value}}, {new: true});
+            return true;
+        } catch (e) {
+            throw new Error('Error updating user role.');
+        }
+    },
 };

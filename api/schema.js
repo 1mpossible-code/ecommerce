@@ -78,5 +78,7 @@ module.exports = gql`
         
         createOrder: Order!
         updateOrderStatus(userId: ID!, status: Status!): Boolean!
+        
+        updateRole(userId: ID!, role: Role!): Boolean!
     }
 `;

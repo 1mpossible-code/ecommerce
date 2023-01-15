@@ -39,4 +39,5 @@ module.exports = {
         zip: Joi.string().length(5).required(),
     }),
     statusValidator: Joi.string().valid('pending', 'processing', 'shipped', 'delivered', 'cancelled').required(),
+    roleValidator: Joi.string().valid('user', 'admin', 'manager').required(),
 };
