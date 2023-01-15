@@ -244,10 +244,11 @@ module.exports = {
         }
 
         try {
-            await models.User.findById(userId, {$set: {role: roleValidated.value}}, {new: true});
+            console.log(roleValidated);
+            await models.User.findByIdAndUpdate(userId, {$set: {role: roleValidated.value}}, {new: true});
             return true;
         } catch (e) {
-            throw new Error('Error updating user role.');
+            throw new Error(`Error updating user role`);
         }
     },
 };
