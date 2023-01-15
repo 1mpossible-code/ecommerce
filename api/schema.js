@@ -3,6 +3,7 @@ const {gql} = require('apollo-server-express');
 module.exports = gql`
     scalar DateTime
     scalar Status
+    scalar Role
     type Product {
         id: ID!
         name: String!
@@ -47,7 +48,7 @@ module.exports = gql`
         shippingDetails: ShippingDetails
         cart: [CartItem!]!
         orders: [Order!]!
-        isAdmin: Boolean!
+        role: Role!
         createdAt: DateTime!
         updatedAt: DateTime!
     }
@@ -76,6 +77,6 @@ module.exports = gql`
         setShippingDetails(firstName: String!, lastName: String!, number: String!, address: String!, city: String!, state: String!, zip: String!): Boolean!
         
         createOrder: Order!
-        updateOrderStatus(id: ID!, status: Status!): Boolean!
+        updateOrderStatus(userId: ID!, status: Status!): Boolean!
     }
 `;

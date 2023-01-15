@@ -3,11 +3,12 @@ const jwt = require('jsonwebtoken');
 const {AuthenticationError, ForbiddenError} = require('apollo-server-express');
 const {Error} = require('mongoose');
 const validators = require('./mutation.validators');
+const {isAuthenticated, isAdmin, isManager} = require('../services/User');
 require('dotenv').config();
 
 module.exports = {
     createProduct: async (_, {name, description, price, quantity}, {models, user}) => {
-        if (!(await models.User.findById(user.id))?.isAdmin) {
+        if (!await isAdmin(models, user)) {
             throw new ForbiddenError('You are not authorized to perform this action.');
         }
 
@@ -19,7 +20,7 @@ module.exports = {
         return await models.Product.create({name, description, price, quantity});
     },
     updateProduct: async (_, {id, name, description, price, quantity}, {models, user}) => {
-        if (!(await models.User.findById(user.id))?.isAdmin) {
+        if (!await isAdmin(models, user)) {
             throw new ForbiddenError('You are not authorized to perform this action.');
         }
 
@@ -40,7 +41,7 @@ module.exports = {
             {new: true});
     },
     deleteProduct: async (_, {id}, {models, user}) => {
-        if (!(await models.User.findById(user.id))?.isAdmin) {
+        if (!await isAdmin(models, user)) {
             throw new ForbiddenError('You are not authorized to perform this action.');
         }
         try {
@@ -84,7 +85,7 @@ module.exports = {
         }
 
         const user = await models.User.findOne({email});
-        if (!user) {
+        if (!isAuthenticated(user)) {
             throw new AuthenticationError('Error signing in.');
         }
 
@@ -96,7 +97,7 @@ module.exports = {
         return jwt.sign({id: user._id}, process.env.JWT_SECRET);
     },
     setToCart: async (_, {productId, quantity}, {models, user}) => {
-        if (!user) {
+        if (!isAuthenticated(user)) {
             throw new AuthenticationError('You are not authenticated.');
         }
         if (quantity < 0) {
@@ -135,7 +136,7 @@ module.exports = {
         }
     },
     setShippingDetails: async (_, {firstName, lastName, number, address, city, state, zip}, {models, user}) => {
-        if (!user) {
+        if (!isAuthenticated(user)) {
             throw new AuthenticationError('You are not authenticated.');
         }
         const shippingDetailsValidated = validators.shippingDetailsValidator.validate({
@@ -176,7 +177,7 @@ module.exports = {
         }
     },
     createOrder: async (_, __, {models, user}) => {
-        if (!user) {
+        if (!isAuthenticated(user)) {
             throw new AuthenticationError('You are not authenticated.');
         }
         const cartItems = await models.CartItem.find({user: user.id, ordered: false});
@@ -217,8 +218,8 @@ module.exports = {
             throw new Error('Error creating order.');
         }
     },
-    updateOrderStatus: async (_, {id, status}, {models, user}) => {
-        if (!(await models.User.findById(user.id)).isAdmin) {
+    updateOrderStatus: async (_, {userId, status}, {models, user}) => {
+        if (!await isManager(models, user)) {
             throw new ForbiddenError('You are not authorized to perform this action.');
         }
         const statusValidated = validators.statusValidator.validate(status);
