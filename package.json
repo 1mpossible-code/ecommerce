@@ -5,7 +5,8 @@
   "license": "GPLv3",
   "scripts": {
     "dev": "nodemon api/index.js",
-    "docker": "docker-compose up --attach node"
+    "docker": "docker-compose up --attach node",
+    "web": "cd web && npm start"
   },
   "dependencies": {
     "apollo-server-express": "^3.11.1",
