@@ -1,4 +1,5 @@
 import React, {FC} from 'react';
+import {Link} from 'react-router-dom';
 
 const Header: FC = () => (
     <>
@@ -9,8 +10,8 @@ const Header: FC = () => (
                 <input type='text' />
             </div>
         </div>
-        <button>Login</button>
-        <button>Signup</button>
+        <Link to='login'>Login</Link>
+        <Link to='signup'>Signup</Link>
     </>
 );
 
