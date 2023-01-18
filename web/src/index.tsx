@@ -6,6 +6,13 @@ import Index from './pages/Index';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 
+import {ApolloClient, ApolloProvider, InMemoryCache} from '@apollo/client';
+
+const client = new ApolloClient({
+    uri: process.env.REACT_APP_GRAPHQL_ENDPOINT,
+    cache: new InMemoryCache(),
+});
+
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement,
 );
@@ -27,6 +34,8 @@ const router = createBrowserRouter([
 
 root.render(
     <React.StrictMode>
-        <RouterProvider router={router} />
+        <ApolloProvider client={client}>
+            <RouterProvider router={router} />
+        </ApolloProvider>
     </React.StrictMode>,
 );
