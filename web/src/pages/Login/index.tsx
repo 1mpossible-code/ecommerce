@@ -1,5 +1,6 @@
 import React, {ChangeEvent, FormEvent, useState} from 'react';
 import {gql, useMutation} from '@apollo/client';
+import {useNavigate} from 'react-router-dom';
 
 const SIGNIN = gql`
 mutation Signin($email: String!, $password: String!) {
@@ -9,6 +10,7 @@ mutation Signin($email: String!, $password: String!) {
 
 const Login = () => {
     const [values, setValues] = useState({});
+    const navigate = useNavigate();
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         setValues({
@@ -19,7 +21,8 @@ const Login = () => {
 
     const [signIn] = useMutation(SIGNIN, {
             onCompleted: (data) => {
-                console.log(data);
+                localStorage.setItem('token', data.signin);
+                navigate('/');
             },
         },
     );
