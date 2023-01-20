@@ -2,12 +2,21 @@ import React from 'react';
 import {gql, useMutation} from '@apollo/client';
 import {useNavigate} from 'react-router-dom';
 import {ErrorMessage, Field, Form, Formik} from 'formik';
+import * as Yup from 'yup';
 
 const SIGNUP = gql`
 mutation Mutation($email: String!, $firstName: String!, $lastName: String!, $password: String!) {
   signup(email: $email, firstName: $firstName, lastName: $lastName, password: $password)
 }
 `;
+
+const SignupSchema = Yup.object().shape({
+    email: Yup.string().email('Invalid email').max(80, 'Email cannot exceed 80 symbols').required('Required'),
+    firstName: Yup.string().max(80, 'First name cannot exceed 80 symbols').required('Required'),
+    lastName: Yup.string().max(80, 'Last name cannot exceed 80 symbols').required('Required'),
+    password: Yup.string().min(8, 'Password should be at least 8 symbols').max(80, 'Password cannot be longer than 80 symbols').required('Required'),
+    confirmPassword: Yup.string().required('Required').oneOf([Yup.ref('password'), null], 'Passwords must match'),
+});
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -30,7 +39,7 @@ const Signup = () => {
                 await signup({variables: {email, firstName, lastName, password}});
                 navigate('/');
             }
-        }>
+        } validationSchema={SignupSchema}>
             {({isSubmitting}) => (
                 <Form>
                     <div>
