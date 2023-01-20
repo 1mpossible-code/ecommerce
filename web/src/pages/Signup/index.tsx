@@ -3,6 +3,7 @@ import {gql, useMutation} from '@apollo/client';
 import {useNavigate} from 'react-router-dom';
 import {ErrorMessage, Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
+import {HashLoader} from 'react-spinners';
 
 const SIGNUP = gql`
 mutation Mutation($email: String!, $firstName: String!, $lastName: String!, $password: String!) {
@@ -27,6 +28,8 @@ const Signup = () => {
             navigate('/');
         },
     });
+
+    if (loading) return <HashLoader color='#000' loading={loading} size={150} />;
 
     return <div>
         <h1>Signup</h1>
