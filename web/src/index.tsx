@@ -6,11 +6,27 @@ import Index from './pages/Index';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 
-import {ApolloClient, ApolloProvider, InMemoryCache} from '@apollo/client';
+import {ApolloClient, ApolloProvider, createHttpLink, InMemoryCache} from '@apollo/client';
+import {setContext} from '@apollo/client/link/context';
+
+const uri = process.env.REACT_APP_GRAPHQL_ENDPOINT;
+const httpLink = createHttpLink({uri});
+const cache = new InMemoryCache();
+
+const authLink = setContext((_, {headers}) => {
+    const token = localStorage.getItem('token');
+    return {
+        headers: {
+            ...headers,
+            authorization: token || '',
+        },
+    };
+});
 
 const client = new ApolloClient({
-    uri: process.env.REACT_APP_GRAPHQL_ENDPOINT,
-    cache: new InMemoryCache(),
+    link: authLink.concat(httpLink),
+    cache,
+    resolvers: {},
 });
 
 const root = ReactDOM.createRoot(
